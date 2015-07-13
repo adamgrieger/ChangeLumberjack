@@ -5,16 +5,19 @@ import org.bukkit.entity.Player;
 import java.io.Serializable;
 import java.util.ArrayList;
 
+
 /**
- * Created by Adam on 7/10/2015.
+ * Class for storing information about which messages each player has and has not seen.
  */
 public class Lumberjacker implements Serializable {
 
     private Player player;
+    private final ChangeLumberjack plugin;
     private ArrayList<Integer> unreadChanges = new ArrayList<>();
 
-    public Lumberjacker(Player play) {
+    public Lumberjacker(Player play, ChangeLumberjack plugin) {
         player = play;
+        this.plugin = plugin;
 
         showAllChanges();
     }
@@ -52,7 +55,7 @@ public class Lumberjacker implements Serializable {
     }
 
     public void showAllChanges() {
-        for (String change : ChangeLumberjack.changelog) {
+        for (String change : plugin.changelog) {
             player.sendMessage(change);
         }
     }
@@ -60,8 +63,10 @@ public class Lumberjacker implements Serializable {
     public void showUnreadChanges() {
         if (!unreadChanges.isEmpty()) {
             for (Integer i : unreadChanges) {
-                player.sendMessage(ChangeLumberjack.changelog.get(i));
+                player.sendMessage(plugin.changelog.get(i));
             }
+
+            unreadChanges.clear();
         }
     }
 }
