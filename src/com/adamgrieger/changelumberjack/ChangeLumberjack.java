@@ -1,7 +1,6 @@
 package com.adamgrieger.changelumberjack;
 
 import org.bukkit.entity.Player;
-import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.*;
@@ -9,49 +8,17 @@ import java.util.*;
 
 
 /**
- * Created by Adam on 7/9/2015.
+ * Main ChangeLumberjack class for plugin initialization and main methods.
  */
 public class ChangeLumberjack extends JavaPlugin {
 
-    public static ArrayList<Lumberjacker> lumberjackers = new ArrayList<>();
-    public static ArrayList<String> changelog = new ArrayList<>();
+    private final PlayerJoinListener joinListener = new PlayerJoinListener(this);
 
-    @Override
-    public void onEnable() {
-        getServer().getPluginManager().registerEvents(new PlayerJoinListener(), this);
-
-        try {
-            File file = new File("changelog.txt");
-            Scanner scan = new Scanner(file);
-
-            while (scan.hasNext()) {
-                changelog.add(scan.nextLine());
-            }
-
-            scan.close();
-        }
-        catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-
-        try {
-            FileInputStream fileIn = new FileInputStream("lumberjackers.ser");
-            ObjectInputStream in = new ObjectInputStream(fileIn);
-            lumberjackers = (ArrayList<Lumberjacker>) in.readObject();
-            in.close();
-            fileIn.close();
-        } catch (IOException | ClassNotFoundException e) {
-            e.printStackTrace();
-            return;
-        }
-
-        this.getCommand("cl").setExecutor(new CommandListener());
-    }
+    public  ArrayList<Lumberjacker> lumberjackers = new ArrayList<>();
+    public  ArrayList<String> changelog = new ArrayList<>();
 
     @Override
     public void onDisable() {
-        HandlerList.unregisterAll();
-
         try {
             FileOutputStream fileOut = new FileOutputStream("lumberjackers.ser");
             ObjectOutputStream out = new ObjectOutputStream(fileOut);
@@ -63,8 +30,45 @@ public class ChangeLumberjack extends JavaPlugin {
         }
     }
 
-    public static void addNewPlayer(Player newPlayer) {
-        lumberjackers.add(new Lumberjacker(newPlayer));
+    @Override
+    public void onEnable() {
+        try {
+            File fileTXT = new File("changelog.txt");
+
+            if (fileTXT.createNewFile()) {
+                getLogger().info("[ChangeLumberjack] changelog.txt created");
+            }
+
+            Scanner txtScanner = new Scanner(fileTXT);
+
+            while (txtScanner.hasNext()) {
+                changelog.add(txtScanner.nextLine());
+            }
+
+            txtScanner.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return;
+        }
+
+        try {
+            File fileSER = new File("lumberjackers.ser");
+
+            if (fileSER.createNewFile()) {
+                getLogger().info("[ChangeLumberjack] lumberjackers.ser created");
+            }
+
+            FileInputStream fileIn = new FileInputStream(fileSER);
+            ObjectInputStream in = new ObjectInputStream(fileIn);
+
+            lumberjackers = (ArrayList<Lumberjacker>) in.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+            return;
+        }
+
+        getServer().getPluginManager().registerEvents(joinListener, this);
+        getCommand("cl").setExecutor(new CLCommandExecutor(this));
     }
 
     public void onReload() {
@@ -72,11 +76,23 @@ public class ChangeLumberjack extends JavaPlugin {
         onEnable();
     }
 
-    public static void addChange(String changeMessage) {
+    public void addNewPlayer(Player newPlayer) {
+        lumberjackers.add(new Lumberjacker(newPlayer, this));
+    }
+
+    public void addChange(String changeMessage) {
         changelog.add(changeMessage);
 
         for (Lumberjacker lum : lumberjackers) {
             lum.addUnreadChangeIndex(changelog.size() - 1);
         }
+    }
+
+    public String getChange(int messageIndex) {
+        return changelog.get(messageIndex);
+    }
+
+    public void removeChange(int messageIndex) {
+        changelog.remove(messageIndex);
     }
 }
