@@ -1,0 +1,32 @@
+name: ChangeLumberjack
+version: 0.1.0
+author: Adam Grieger
+main: com.adamgrieger.changelumberjack.ChangeLumberjack
+description: A plugin that notifies players once of each new server changelog
+
+commands:
+  cl:
+    description: Main ChangeLumberjack command
+    aliases: [changelumberjack, changelog]
+    usage: /<command> help
+
+permissions:
+  cl.*:
+    description: Gives access to all ChangeLumberjack features
+    default: false
+    children:
+      cl.admin.*: true
+      cl.user.*: true
+    cl.admin.*:
+      description: Gives access to all ChangeLumberjack admin features
+      default: false
+      children:
+        cl.admin.reload: true
+        cl.admin.remove: true
+    cl.user.*:
+      description: Gives access to all regular user ChangeLumberjack features
+      default: true
+      children:
+        cl.user.add: true
+        cl.user.show: true
+        cl.user.version: true
