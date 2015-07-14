@@ -22,7 +22,6 @@ public class CLCommandExecutor implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         int numArgs = args.length;
-        Player player = (Player) sender;
 
         if (numArgs == 0) {
             return false;
@@ -48,7 +47,7 @@ public class CLCommandExecutor implements CommandExecutor {
         if (args[0].equalsIgnoreCase("remove")) {
             if (numArgs == 2) {
                 plugin.removeChange(Integer.valueOf(args[1]));
-                player.sendMessage("[ChangeLumberjack] Change message removed.");
+                sender.sendMessage("[ChangeLumberjack] Change message removed.");
                 return true;
             } else {
                 return false;
@@ -57,7 +56,7 @@ public class CLCommandExecutor implements CommandExecutor {
 
         if (args[0].equalsIgnoreCase("show")) {
             if (numArgs == 2) {
-                player.sendMessage(plugin.getChange(Integer.valueOf(args[1])));
+                sender.sendMessage(plugin.getChange(Integer.valueOf(args[1])));
                 return true;
             } else {
                 return false;
@@ -66,7 +65,7 @@ public class CLCommandExecutor implements CommandExecutor {
 
         if (args[0].equalsIgnoreCase("version")) {
             if (numArgs == 1) {
-                player.sendMessage("[ChangeLumberjack] Version: 0.2.0");
+                sender.sendMessage("[ChangeLumberjack] Version: 0.2.0");
                 return true;
             } else {
                 return false;
