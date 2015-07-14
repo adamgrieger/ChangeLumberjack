@@ -22,42 +22,16 @@ public class Lumberjacker implements Serializable {
         showAllChanges();
     }
 
-    // -----------
-    // | Getters |
-    // -----------
-
     public Player getPlayer() {
         return player;
     }
-
-    public ArrayList<Integer> getUnreadChanges() {
-        return unreadChanges;
-    }
-
-    // -----------
-    // | Setters |
-    // -----------
-
-    public void setPlayer(Player play) {
-        player = play;
-    }
-
-    public void setUnreadChanges(ArrayList<Integer> unread) {
-        unreadChanges = unread;
-    }
-
-    // -----------
-    // | Methods |
-    // -----------
 
     public void addUnreadChangeIndex(int changeIndex) {
         unreadChanges.add(changeIndex);
     }
 
     public void showAllChanges() {
-        for (String change : plugin.changelog) {
-            player.sendMessage(change);
-        }
+        plugin.changelog.forEach(player::sendMessage);
     }
 
     public void showUnreadChanges() {
