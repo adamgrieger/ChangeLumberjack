@@ -20,11 +20,19 @@ public class ChangeLumberjack extends JavaPlugin {
     @Override
     public void onDisable() {
         try {
-            FileOutputStream fileOut = new FileOutputStream("lumberjackers.ser");
+            File fileSER = new File("lumberjackers.ser");
+
+            if (fileSER.createNewFile()) {
+                getLogger().info("[ChangeLumberjack] lumberjackers.ser created");
+            }
+
+            FileOutputStream fileOut = new FileOutputStream(fileSER);
             ObjectOutputStream out = new ObjectOutputStream(fileOut);
+
             out.writeObject(lumberjackers);
-            out.close();
+
             fileOut.close();
+            out.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -62,6 +70,9 @@ public class ChangeLumberjack extends JavaPlugin {
             ObjectInputStream in = new ObjectInputStream(fileIn);
 
             lumberjackers = (ArrayList<Lumberjacker>) in.readObject();
+
+            fileIn.close();
+            in.close();
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
             return;
