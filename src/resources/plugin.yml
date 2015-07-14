@@ -1,5 +1,5 @@
 name: ChangeLumberjack
-version: 0.1.0
+version: 0.2.0
 author: Adam Grieger
 main: com.adamgrieger.changelumberjack.ChangeLumberjack
 description: A plugin that notifies players once of each new server changelog
