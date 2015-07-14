@@ -19,11 +19,11 @@ public class ChangeLumberjack extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        try {
-            File fileSER = new File("lumberjackers.ser");
+        File fileSER = new File("plugins/ChangeLumberjack/lumberjackers.ser");
 
+        try {
             if (fileSER.createNewFile()) {
-                getLogger().info("[ChangeLumberjack] lumberjackers.ser created");
+                getLogger().info("lumberjackers.ser created");
             }
 
             FileOutputStream fileOut = new FileOutputStream(fileSER);
@@ -40,39 +40,45 @@ public class ChangeLumberjack extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        File fileTXT = new File("plugins/ChangeLumberjack/changelog.txt");
+
+        if (!fileTXT.exists()) {
+            if (new File("plugins/ChangeLumberjack").mkdirs()) {
+                getLogger().info("ChangeLumberjack directory created");
+            }
+        }
+
         try {
-            File fileTXT = new File("changelog.txt");
-
             if (fileTXT.createNewFile()) {
-                getLogger().info("[ChangeLumberjack] changelog.txt created");
+                getLogger().info("changelog.txt created");
+            } else {
+                Scanner txtScanner = new Scanner(fileTXT);
+
+                while (txtScanner.hasNext()) {
+                    changelog.add(txtScanner.nextLine());
+                }
+
+                txtScanner.close();
             }
-
-            Scanner txtScanner = new Scanner(fileTXT);
-
-            while (txtScanner.hasNext()) {
-                changelog.add(txtScanner.nextLine());
-            }
-
-            txtScanner.close();
         } catch (IOException e) {
             e.printStackTrace();
             return;
         }
 
+        File fileSER = new File("plugins/ChangeLumberjack/lumberjackers.ser");
+
         try {
-            File fileSER = new File("lumberjackers.ser");
-
             if (fileSER.createNewFile()) {
-                getLogger().info("[ChangeLumberjack] lumberjackers.ser created");
+                getLogger().info("lumberjackers.ser created");
+            } else {
+                FileInputStream fileIn = new FileInputStream(fileSER);
+                ObjectInputStream in = new ObjectInputStream(fileIn);
+
+                lumberjackers = (ArrayList<Lumberjacker>) in.readObject();
+
+                fileIn.close();
+                in.close();
             }
-
-            FileInputStream fileIn = new FileInputStream(fileSER);
-            ObjectInputStream in = new ObjectInputStream(fileIn);
-
-            lumberjackers = (ArrayList<Lumberjacker>) in.readObject();
-
-            fileIn.close();
-            in.close();
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
             return;
@@ -83,6 +89,8 @@ public class ChangeLumberjack extends JavaPlugin {
     }
 
     public void onReload() {
+        getLogger().info("Reloading...");
+
         onDisable();
         onEnable();
     }
