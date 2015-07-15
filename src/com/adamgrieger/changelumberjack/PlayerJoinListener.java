@@ -20,17 +20,12 @@ public class PlayerJoinListener implements Listener {
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player joinedPlayer = event.getPlayer();
-        boolean newPlayer = true;
 
-        for (int i = 0; i < plugin.lumberjackers.size() && newPlayer; i++) {
-            if (plugin.lumberjackers.get(i).getPlayer().getName().equals(joinedPlayer.getName())) {
-                newPlayer = false;
-                plugin.lumberjackers.get(i).showUnreadChanges();
-            }
-        }
-
-        if (newPlayer) {
-            plugin.addNewPlayer(joinedPlayer);
+        if (plugin.players.containsKey(joinedPlayer.getName())) {
+            plugin.showUnreadChangeMessages(joinedPlayer);
+        } else {
+            plugin.addNewPlayer(joinedPlayer.getName());
+            plugin.showAllChangeMessages(joinedPlayer);
         }
     }
 }
