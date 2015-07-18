@@ -1,6 +1,7 @@
 package com.adamgrieger.changelumberjack;
 
 import org.bukkit.ChatColor;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -13,7 +14,7 @@ import java.util.*;
  */
 public class ChangeLumberjack extends JavaPlugin {
 
-    public String messagePrefix = ChatColor.DARK_GREEN + "[" + ChatColor.GOLD + "ChangeLumberjack" + ChatColor.DARK_GREEN + "] " + ChatColor.RESET;
+    public String messagePrefix = ChatColor.DARK_GRAY + "[" + ChatColor.RED + "ChangeLumberjack" + ChatColor.DARK_GRAY + "] " + ChatColor.RESET;
 
     private final PlayerJoinListener joinListener = new PlayerJoinListener(this);
 
@@ -22,14 +23,39 @@ public class ChangeLumberjack extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        File fileSER = new File("plugins/ChangeLumberjack/players.ser");
+        File fileChangelog = new File("plugins/ChangeLumberjack/changelog.ser");
+
+        if (!fileChangelog.exists()) {
+            if (new File("plugins/ChangeLumberjack").mkdirs()) {
+                getLogger().info("ChangeLumberjack directory created");
+            }
+        }
 
         try {
-            if (fileSER.createNewFile()) {
+            if (fileChangelog.createNewFile()) {
+                getLogger().info("changelog.ser created");
+            } else {
+                FileOutputStream fileOut = new FileOutputStream(fileChangelog);
+                ObjectOutputStream out = new ObjectOutputStream(fileOut);
+
+                out.writeObject(changelog);
+
+                fileOut.close();
+                out.close();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            return;
+        }
+
+        File filePlayers = new File("plugins/ChangeLumberjack/players.ser");
+
+        try {
+            if (filePlayers.createNewFile()) {
                 getLogger().info("players.ser created");
             }
 
-            FileOutputStream fileOut = new FileOutputStream(fileSER);
+            FileOutputStream fileOut = new FileOutputStream(filePlayers);
             ObjectOutputStream out = new ObjectOutputStream(fileOut);
 
             out.writeObject(players);
@@ -42,44 +68,45 @@ public class ChangeLumberjack extends JavaPlugin {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public void onEnable() {
         boolean newChangelogFile = false;
         boolean newPlayersFile = false;
 
-        File fileTXT = new File("plugins/ChangeLumberjack/changelog.txt");
+        File fileChangelog = new File("plugins/ChangeLumberjack/changelog.ser");
 
-        if (!fileTXT.exists()) {
+        if (!fileChangelog.exists()) {
             if (new File("plugins/ChangeLumberjack").mkdirs()) {
                 getLogger().info("ChangeLumberjack directory created");
             }
         }
 
         try {
-            if (fileTXT.createNewFile()) {
-                getLogger().info("changelog.txt created");
+            if (fileChangelog.createNewFile()) {
+                getLogger().info("changelog.ser created");
                 newChangelogFile = true;
             } else {
-                Scanner txtScanner = new Scanner(fileTXT);
+                FileInputStream fileIn = new FileInputStream(fileChangelog);
+                ObjectInputStream in = new ObjectInputStream(fileIn);
 
-                while (txtScanner.hasNext()) {
-                    changelog.add(txtScanner.nextLine());
-                }
+                changelog = (ArrayList<String>) in.readObject();
 
-                txtScanner.close();
+                fileIn.close();
+                in.close();
             }
-        } catch (IOException e) {
+        } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
             return;
         }
 
-        File fileSER = new File("plugins/ChangeLumberjack/players.ser");
+        File filePlayers = new File("plugins/ChangeLumberjack/players.ser");
 
         try {
-            if (fileSER.createNewFile()) {
+            if (filePlayers.createNewFile()) {
                 getLogger().info("players.ser created");
                 newPlayersFile = true;
             } else {
-                FileInputStream fileIn = new FileInputStream(fileSER);
+                FileInputStream fileIn = new FileInputStream(filePlayers);
                 ObjectInputStream in = new ObjectInputStream(fileIn);
 
                 players = (Map<String, ArrayList<Integer>>) in.readObject();
@@ -161,16 +188,38 @@ public class ChangeLumberjack extends JavaPlugin {
      * @param messageIndex Index of the message to be removed
      */
     public void removeChangeMessage(int messageIndex) {
-        changelog.remove(messageIndex);
+            changelog.remove(messageIndex);
     }
 
     /**
      * Shows all messages in the server's changelog.
      *
-     * @param player Player to send the messages to
+     * @param sender Player or console to send the messages to
      */
-    public void showAllChangeMessages(Player player) {
-        changelog.forEach(player::sendMessage);
+    public void showAllChangeMessages(CommandSender sender) {
+        if (changelog.isEmpty()) {
+            sender.sendMessage(messagePrefix + "No server changelog messages found!");
+        } else {
+            sender.sendMessage(messagePrefix + "All server changelog messages:");
+            changelog.forEach(sender::sendMessage);
+        }
+    }
+
+    /**
+     * Shows recent server changelog messages.
+     *
+     * @param sender Command issuer
+     * @param amount Desired number of recent message to display
+     */
+    public void showRecentChangeMessages(CommandSender sender, int amount) {
+        if (changelog.isEmpty()) {
+            sender.sendMessage(messagePrefix + "No server changelog messages found!");
+        } else if (amount >= changelog.size()) {
+            showAllChangeMessages(sender);
+        } else {
+            sender.sendMessage(messagePrefix + "Recent server changelog messages:");
+            changelog.subList(changelog.size() - amount, changelog.size()).forEach(sender::sendMessage);
+        }
     }
 
     /**
@@ -180,7 +229,7 @@ public class ChangeLumberjack extends JavaPlugin {
      */
     public void showUnreadChangeMessages(Player player) {
         if (players.get(player.getName()).isEmpty()) {
-            player.sendMessage(messagePrefix + "No new server changelog messages!");
+            player.sendMessage(messagePrefix + "No new server changelog messages.");
         } else {
             player.sendMessage(messagePrefix + "Unread server changelog messages:");
 
