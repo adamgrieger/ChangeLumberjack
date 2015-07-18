@@ -17,6 +17,8 @@ public class CLCommandExecutor implements CommandExecutor {
 
     private final ChangeLumberjack plugin;
 
+    public int defaultRecentAmount = 5;
+
     public String permissionMessage = "Sorry, you don't have permission to do that!";
 
     public String helpHeader = ChatColor.YELLOW + "---------" + ChatColor.RESET + " Help: ChangeLumberjack " + ChatColor.YELLOW + "----------------" + ChatColor.RESET;
@@ -25,6 +27,8 @@ public class CLCommandExecutor implements CommandExecutor {
     public String helpReloadHeader = ChatColor.YELLOW + "---------" + ChatColor.RESET + " Help: /cl reload " + ChatColor.YELLOW + "----------------------" + ChatColor.RESET;
     public String helpRemoveHeader = ChatColor.YELLOW + "---------" + ChatColor.RESET + " Help: /cl remove " + ChatColor.YELLOW + "----------------------" + ChatColor.RESET;
     public String helpShowHeader = ChatColor.YELLOW + "---------" + ChatColor.RESET + " Help: /cl show " + ChatColor.YELLOW + "------------------------" + ChatColor.RESET;
+    public String helpShowallHeader = ChatColor.YELLOW + "---------" + ChatColor.RESET + " Help: /cl showall " + ChatColor.YELLOW + "---------------------" + ChatColor.RESET;
+    public String helpShowrecentHeader = ChatColor.YELLOW + "---------" + ChatColor.RESET + " Help: /cl showrecent " + ChatColor.YELLOW + "------------------" + ChatColor.RESET;
     public String helpVersionHeader = ChatColor.YELLOW + "---------" + ChatColor.RESET + " Help: /cl version " + ChatColor.YELLOW + "---------------------" + ChatColor.RESET;
 
     public String descAdd = "Adds a message to the server's changelog.";
@@ -32,6 +36,8 @@ public class CLCommandExecutor implements CommandExecutor {
     public String descReload = "Reloads ChangeLumberjack.";
     public String descRemove = "Removes a server changelog message.";
     public String descShow = "Shows a server changelog message.";
+    public String descShowall = "Shows all server changelog messages.";
+    public String descShowrecent = "Shows recent server changelog messages.";
     public String descVersion = "Displays the ChangeLumberjack version.";
 
     public CLCommandExecutor(ChangeLumberjack plugin) {
@@ -82,6 +88,8 @@ public class CLCommandExecutor implements CommandExecutor {
                     sender.sendMessage(ChatColor.GOLD + "/cl reload: " + ChatColor.RESET + descReload);
                     sender.sendMessage(ChatColor.GOLD + "/cl remove: " + ChatColor.RESET + descRemove);
                     sender.sendMessage(ChatColor.GOLD + "/cl show: " + ChatColor.RESET + descShow);
+                    sender.sendMessage(ChatColor.GOLD + "/cl showall: " + ChatColor.RESET + descShowall);
+                    sender.sendMessage(ChatColor.GOLD + "/cl showrecent: " + ChatColor.RESET + descShowrecent);
                     sender.sendMessage(ChatColor.GOLD + "/cl version: " + ChatColor.RESET + descVersion);
 
                     return true;
@@ -106,6 +114,14 @@ public class CLCommandExecutor implements CommandExecutor {
                         sender.sendMessage(helpShowHeader);
                         sender.sendMessage(ChatColor.GOLD + "Description: " + ChatColor.RESET + descShow);
                         sender.sendMessage(ChatColor.GOLD + "Usage: " + ChatColor.RESET + "/cl show <index>");
+                    } else if (args[1].equalsIgnoreCase("showall")) {
+                        sender.sendMessage(helpShowallHeader);
+                        sender.sendMessage(ChatColor.GOLD + "Description: " + ChatColor.RESET + descShowall);
+                        sender.sendMessage(ChatColor.GOLD + "Usage: " + ChatColor.RESET + "/cl showall");
+                    } else if (args[1].equalsIgnoreCase("showrecent")) {
+                        sender.sendMessage(helpShowrecentHeader);
+                        sender.sendMessage(ChatColor.GOLD + "Description: " + ChatColor.RESET + descShowrecent);
+                        sender.sendMessage(ChatColor.GOLD + "Usage: " + ChatColor.RESET + "/cl showrecent [amount]");
                     } else if (args[1].equalsIgnoreCase("version")) {
                         sender.sendMessage(helpVersionHeader);
                         sender.sendMessage(ChatColor.GOLD + "Description: " + ChatColor.RESET + descVersion);
@@ -125,6 +141,7 @@ public class CLCommandExecutor implements CommandExecutor {
             if (sender instanceof Player && sender.hasPermission("cl.admin.reload") || sender instanceof ConsoleCommandSender){
                 if (numArgs == 1) {
                     plugin.onReload();
+                    sender.sendMessage(plugin.messagePrefix + "Plugin reloaded.");
 
                     return true;
                 } else {
@@ -172,10 +189,40 @@ public class CLCommandExecutor implements CommandExecutor {
             }
         }
 
+        if (args[0].equalsIgnoreCase("showall")) {
+            if (sender instanceof Player && sender.hasPermission("cl.user.showall") || sender instanceof ConsoleCommandSender) {
+                if (numArgs == 1) {
+                    plugin.showAllChangeMessages(sender);
+                } else {
+                    return false;
+                }
+            } else {
+                sender.sendMessage(permissionMessage);
+            }
+        }
+
+        if (args[0].equalsIgnoreCase("showrecent")) {
+            if (sender instanceof Player && sender.hasPermission("cl.user.showrecent") || sender instanceof ConsoleCommandSender) {
+                if (numArgs == 1) {
+                    plugin.showRecentChangeMessages(sender, defaultRecentAmount);
+                } else if (numArgs == 2) {
+                    try {
+                        plugin.showRecentChangeMessages(sender, Integer.valueOf(args[1]));
+                    } catch (NumberFormatException e) {
+                        return false;
+                    }
+                } else {
+                    return false;
+                }
+            } else {
+                sender.sendMessage(permissionMessage);
+            }
+        }
+
         if (args[0].equalsIgnoreCase("version")) {
             if (sender instanceof Player && sender.hasPermission("cl.user.version") || sender instanceof ConsoleCommandSender) {
                 if (numArgs == 1) {
-                    sender.sendMessage(plugin.messagePrefix + "Version: 0.3.0");
+                    sender.sendMessage(plugin.messagePrefix + "Version: 1.0.0");
 
                     return true;
                 } else {
