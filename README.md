@@ -8,7 +8,7 @@ ChangeLumberjack is a Spigot plugin for Minecraft servers that allows people wit
 You can download the latest ChangeLumberjack JAR file under the [Releases](https://github.com/adamgrieger/ChangeLumberjack/releases) tab. Make sure you don't accidentally download the compressed source code, because it is not compiled for you!
 
 ## Installation
-Installing ChangeLumberjack is extremely easy. Simply place your `ChangeLumberjack.jar` file in your server's `\plugins` folder and you're good to go!
+Installing ChangeLumberjack is extremely easy. Simply place your `ChangeLumberjack.jar` file in your server's `/plugins` folder and you're good to go!
 
 ## Usage
 
