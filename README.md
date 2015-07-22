@@ -1,5 +1,10 @@
-![ChangeLumberjack](http://i.imgur.com/SxrhQwQ.png)
-##### A Spigot plugin that notifies users of server changes when they connect to the server.
+<p align="center">
+  <img src="http://i.imgur.com/SxrhQwQ.png">
+</p>
+
+<p align="center">
+  <strong>A Spigot plugin that notifies users of server change when they connect to the server.</strong>
+</p>
 
 ## Description
 ChangeLumberjack is a Spigot plugin for Minecraft servers that allows people with the right permissions to leave messages in the server's changelog. This plugin can either be utilized strictly by admins to very easily notify regular server users of any changes to the server, or it can be used by everybody on a smaller server to keep everyone in the loop on what has been built. Every ChangeLumberjack command has it's own permission, so you can tweak the permissions to fit your server!
