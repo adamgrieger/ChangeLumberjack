@@ -19,8 +19,11 @@ public class CLCommandExecutor implements CommandExecutor {
 
     public int defaultRecentAmount = 5;
 
+    public String versionNumber = "1.0.1";
+
     public String permissionMessage = "Sorry, you don't have permission to do that!";
 
+    // Headers for /cl help <command> commands
     public String helpHeader = ChatColor.YELLOW + "---------" + ChatColor.RESET + " Help: ChangeLumberjack " + ChatColor.YELLOW + "----------------" + ChatColor.RESET;
     public String helpAddHeader = ChatColor.YELLOW + "---------" + ChatColor.RESET + " Help: /cl add " + ChatColor.YELLOW + "-------------------------" + ChatColor.RESET;
     public String helpHelpHeader = ChatColor.YELLOW + "---------" + ChatColor.RESET + " Help: /cl help " + ChatColor.YELLOW + "------------------------" + ChatColor.RESET;
@@ -31,6 +34,7 @@ public class CLCommandExecutor implements CommandExecutor {
     public String helpShowrecentHeader = ChatColor.YELLOW + "---------" + ChatColor.RESET + " Help: /cl showrecent " + ChatColor.YELLOW + "------------------" + ChatColor.RESET;
     public String helpVersionHeader = ChatColor.YELLOW + "---------" + ChatColor.RESET + " Help: /cl version " + ChatColor.YELLOW + "---------------------" + ChatColor.RESET;
 
+    // Descriptions for /cl help <command> commands
     public String descAdd = "Adds a message to the server's changelog.";
     public String descHelp = "Displays the ChangeLumberjack help menu.";
     public String descReload = "Reloads ChangeLumberjack.";
@@ -40,6 +44,11 @@ public class CLCommandExecutor implements CommandExecutor {
     public String descShowrecent = "Shows recent server changelog messages.";
     public String descVersion = "Displays the ChangeLumberjack version.";
 
+    /**
+     * Constructor for CLCommandExecutor.
+     *
+     * @param plugin Instance of CLCommandExecutor
+     */
     public CLCommandExecutor(ChangeLumberjack plugin) {
         this.plugin = plugin;
     }
@@ -52,12 +61,15 @@ public class CLCommandExecutor implements CommandExecutor {
             return false;
         }
 
+        // /add command
         if (args[0].equalsIgnoreCase("add")) {
             if (sender instanceof Player && sender.hasPermission("cl.user.add") || sender instanceof ConsoleCommandSender) {
                 if (numArgs > 1) {
+                    // Joins together all following arguments since they are separated by each word
                     String msg = String.join(" ", Arrays.copyOfRange(args, 1, numArgs));
                     String msgFormatted;
 
+                    // Marks whether the message was sent by a player or the console
                     if (sender instanceof Player) {
                         msgFormatted = ChatColor.DARK_GRAY + "[" + ChatColor.GRAY + sender.getName() + ChatColor.DARK_GRAY + "]" + ChatColor.RESET + ": " + msg;
                     } else {
@@ -78,9 +90,10 @@ public class CLCommandExecutor implements CommandExecutor {
             }
         }
 
+        // /help command
         if (args[0].equalsIgnoreCase("help")) {
             if (sender instanceof Player && sender.hasPermission("cl.user.help") || sender instanceof ConsoleCommandSender) {
-                if (numArgs == 1) {
+                if (numArgs == 1) {    // General help (no arguments)
                     sender.sendMessage(helpHeader);
                     sender.sendMessage(ChatColor.GRAY + "Below is a list of all ChangeLumberjack commands:" + ChatColor.RESET);
                     sender.sendMessage(ChatColor.GOLD + "/cl add: " + ChatColor.RESET + descAdd);
@@ -93,7 +106,7 @@ public class CLCommandExecutor implements CommandExecutor {
                     sender.sendMessage(ChatColor.GOLD + "/cl version: " + ChatColor.RESET + descVersion);
 
                     return true;
-                } else if (numArgs == 2) {
+                } else if (numArgs == 2) {    // Specific command help
                     if (args[1].equalsIgnoreCase("add")){
                         sender.sendMessage(helpAddHeader);
                         sender.sendMessage(ChatColor.GOLD + "Description: " + ChatColor.RESET + descAdd);
@@ -137,6 +150,7 @@ public class CLCommandExecutor implements CommandExecutor {
             }
         }
 
+        // /reload command
         if (args[0].equalsIgnoreCase("reload")) {
             if (sender instanceof Player && sender.hasPermission("cl.admin.reload") || sender instanceof ConsoleCommandSender){
                 if (numArgs == 1) {
@@ -152,6 +166,7 @@ public class CLCommandExecutor implements CommandExecutor {
             }
         }
 
+        // /remove command
         if (args[0].equalsIgnoreCase("remove")) {
             if (sender instanceof Player && sender.hasPermission("cl.admin.remove") || sender instanceof ConsoleCommandSender) {
                 if (numArgs == 2) {
@@ -171,6 +186,7 @@ public class CLCommandExecutor implements CommandExecutor {
             }
         }
 
+        // /show command
         if (args[0].equalsIgnoreCase("show")) {
             if (sender instanceof Player && sender.hasPermission("cl.user.show") || sender instanceof ConsoleCommandSender) {
                 if (numArgs == 2) {
@@ -189,6 +205,7 @@ public class CLCommandExecutor implements CommandExecutor {
             }
         }
 
+        // /showall command
         if (args[0].equalsIgnoreCase("showall")) {
             if (sender instanceof Player && sender.hasPermission("cl.user.showall") || sender instanceof ConsoleCommandSender) {
                 if (numArgs == 1) {
@@ -201,11 +218,14 @@ public class CLCommandExecutor implements CommandExecutor {
             }
         }
 
+        // /showrecent command
         if (args[0].equalsIgnoreCase("showrecent")) {
             if (sender instanceof Player && sender.hasPermission("cl.user.showrecent") || sender instanceof ConsoleCommandSender) {
                 if (numArgs == 1) {
+                    // If user doesn't specify how many recent messages to show
                     plugin.showRecentChangeMessages(sender, defaultRecentAmount);
                 } else if (numArgs == 2) {
+                    // If user specifies how many recent messages to show (assuming an actual number is given)
                     try {
                         plugin.showRecentChangeMessages(sender, Integer.valueOf(args[1]));
                     } catch (NumberFormatException e) {
@@ -219,10 +239,11 @@ public class CLCommandExecutor implements CommandExecutor {
             }
         }
 
+        // /version command
         if (args[0].equalsIgnoreCase("version")) {
             if (sender instanceof Player && sender.hasPermission("cl.user.version") || sender instanceof ConsoleCommandSender) {
                 if (numArgs == 1) {
-                    sender.sendMessage(plugin.messagePrefix + "Version: 1.0.0");
+                    sender.sendMessage(plugin.messagePrefix + versionNumber);
 
                     return true;
                 } else {

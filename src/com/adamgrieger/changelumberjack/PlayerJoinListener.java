@@ -13,6 +13,11 @@ public class PlayerJoinListener implements Listener {
 
     private final ChangeLumberjack plugin;
 
+    /**
+     * Constructor for PlayerJoinListener.
+     *
+     * @param plugin Instance of ChangeLumberjack
+     */
     public PlayerJoinListener(ChangeLumberjack plugin) {
         this.plugin = plugin;
     }

@@ -14,10 +14,13 @@ import java.util.*;
  */
 public class ChangeLumberjack extends JavaPlugin {
 
+    // [ChangeLumberjack] tag before every message
     public String messagePrefix = ChatColor.DARK_GRAY + "[" + ChatColor.RED + "ChangeLumberjack" + ChatColor.DARK_GRAY + "] " + ChatColor.RESET;
 
+    // Listener for when a player joins the server
     private final PlayerJoinListener joinListener = new PlayerJoinListener(this);
 
+    // Storage for player data and messages
     public Map<String, ArrayList<Integer>> players = new HashMap<>();
     public ArrayList<String> changelog = new ArrayList<>();
 
@@ -25,12 +28,14 @@ public class ChangeLumberjack extends JavaPlugin {
     public void onDisable() {
         File fileChangelog = new File("plugins/ChangeLumberjack/changelog.ser");
 
+        // Create ChangeLumberjack directory if it doesn't exist
         if (!fileChangelog.exists()) {
             if (new File("plugins/ChangeLumberjack").mkdirs()) {
                 getLogger().info("ChangeLumberjack directory created");
             }
         }
 
+        // Saves changelog messages (creates file if not found)
         try {
             if (fileChangelog.createNewFile()) {
                 getLogger().info("changelog.ser created");
@@ -50,6 +55,7 @@ public class ChangeLumberjack extends JavaPlugin {
 
         File filePlayers = new File("plugins/ChangeLumberjack/players.ser");
 
+        // Saves players' unread messages data (creates file if not found)
         try {
             if (filePlayers.createNewFile()) {
                 getLogger().info("players.ser created");
@@ -75,12 +81,14 @@ public class ChangeLumberjack extends JavaPlugin {
 
         File fileChangelog = new File("plugins/ChangeLumberjack/changelog.ser");
 
+        // Creates ChangeLumberjack directory if it doesn't exist
         if (!fileChangelog.exists()) {
             if (new File("plugins/ChangeLumberjack").mkdirs()) {
                 getLogger().info("ChangeLumberjack directory created");
             }
         }
 
+        // Loads changelog messages (creates file if not found)
         try {
             if (fileChangelog.createNewFile()) {
                 getLogger().info("changelog.ser created");
@@ -101,6 +109,7 @@ public class ChangeLumberjack extends JavaPlugin {
 
         File filePlayers = new File("plugins/ChangeLumberjack/players.ser");
 
+        // Loads players' unread messages data (creates file if not found)
         try {
             if (filePlayers.createNewFile()) {
                 getLogger().info("players.ser created");
@@ -119,12 +128,14 @@ public class ChangeLumberjack extends JavaPlugin {
             return;
         }
 
+        // Wipes all players' unread messages data if a new changelog has been created (prevents desync errors)
         if (newChangelogFile && !newPlayersFile) {
             for (Map.Entry<String, ArrayList<Integer>> player : players.entrySet()) {
                 players.put(player.getKey(), new ArrayList<>());
             }
         }
 
+        // Listener and command registration
         getServer().getPluginManager().registerEvents(joinListener, this);
         getCommand("cl").setExecutor(new CLCommandExecutor(this));
     }
@@ -215,6 +226,7 @@ public class ChangeLumberjack extends JavaPlugin {
         if (changelog.isEmpty()) {
             sender.sendMessage(messagePrefix + "No server changelog messages found!");
         } else if (amount >= changelog.size()) {
+            // All messages shown if the user wants more messages than there are existing
             showAllChangeMessages(sender);
         } else {
             sender.sendMessage(messagePrefix + "Recent server changelog messages:");
@@ -237,6 +249,7 @@ public class ChangeLumberjack extends JavaPlugin {
                 player.sendMessage(changelog.get(unreadMsgIndex));
             }
 
+            // Clears unread message indices for the user
             players.put(player.getName(), new ArrayList<>());
         }
     }
