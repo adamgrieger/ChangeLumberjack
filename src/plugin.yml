@@ -1,8 +1,8 @@
 name: ChangeLumberjack
-version: 1.0.0
+version: 1.0.1
 author: Adam Grieger
 main: com.adamgrieger.changelumberjack.ChangeLumberjack
-description: A Spigot plugin that notifies users of server changes when they connect to the server.
+description: A Spigot/Bukkit plugin that notifies users of server changes when they connect to the server.
 
 commands:
   cl:
