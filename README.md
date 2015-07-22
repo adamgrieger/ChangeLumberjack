@@ -16,13 +16,12 @@ You can download the latest ChangeLumberjack JAR file under the [Releases](https
 Installing ChangeLumberjack is extremely easy. Simply place your `ChangeLumberjack.jar` file in your server's `/plugins` folder and you're good to go!
 
 ## Usage
-
 Below is a list of all ChangeLumberjack commands (This information is also available in-game via `/cl help`):
 
 | Command | Description | Usage | Permission |
 |---------|-------------|-------|------------|
 | **/cl add** | Adds a message to the server's changelog. | `/cl add <message>` | `cl.user.add` |
-| **/cl help** | Displays the ChangeLumberjack help menu. | `/cl help ` | `cl.user.help` |
+| **/cl help** | Displays the ChangeLumberjack help menu. | `/cl help` | `cl.user.help` |
 | **/cl reload** | Reloads ChangeLumberjack. | `/cl reload` | `cl.admin.reload` |
 | **/cl remove** | Removes a server changelog message. | `/cl remove <index>` | `cl.admin.remove` |
 | **/cl show** | Shows a server changelog message. | `/cl show <index>` | `cl.user.show` |
