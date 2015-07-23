@@ -17,19 +17,19 @@ permissions:
     children:
       cl.admin.*: true
       cl.user.*: true
-    cl.admin.*:
-      description: Gives access to all ChangeLumberjack admin features
-      default: false
-      children:
-        cl.admin.reload: true
-        cl.admin.remove: true
-    cl.user.*:
-      description: Gives access to all regular user ChangeLumberjack features
-      default: true
-      children:
-        cl.user.add: true
-        cl.user.help: true
-        cl.user.show: true
-        cl.user.showall: true
-        cl.user.showrecent: true
-        cl.user.version: true
+  cl.admin.*:
+    description: Gives access to all ChangeLumberjack admin features
+    default: false
+    children:
+      cl.admin.reload: true
+      cl.admin.remove: true
+  cl.user.*:
+    description: Gives access to all regular user ChangeLumberjack features
+    default: true
+    children:
+      cl.user.add: true
+      cl.user.help: true
+      cl.user.show: true
+      cl.user.showall: true
+      cl.user.showrecent: true
+      cl.user.version: true
