@@ -19,7 +19,7 @@ public class CLCommandExecutor implements CommandExecutor {
 
     public int defaultRecentAmount = 5;
 
-    public String versionNumber = "1.0.1";
+    public String versionNumber = "1.0.2";
 
     public String permissionMessage = "Sorry, you don't have permission to do that!";
 
